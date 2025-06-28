@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { IProfile, IRoadMap } from '@/interface/profile'
 
- interface ProfileState {
+interface ProfileState {
   data: IProfile
   loading: boolean
 }
@@ -20,7 +20,8 @@ const initialState: ProfileState = {
       twitter: '',
       linkedin: ''
     },
-    joined_at: ''
+    joined_at: '',
+    created_at: '',
   },
   loading: false
 }

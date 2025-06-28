@@ -1,11 +1,14 @@
-import type { IProfile,IRoadMap } from '@/interface/profile'
+import type { IProfile, IRoadMap } from '@/interface/profile'
+import ax from "@/utility/axios"
 
-export const fetchProfileFromApi = async (): Promise<IProfile> => {
-  const data = await import('@/mock/mock-profile')
-  return data.default.mockProfile   
-}
+export const fetchProfileFromApi = async (id: number = 1): Promise<IProfile> => {
+  const res = await ax.get<IProfile>(`/profile/${id}`);
+  return res.data;
+};
+
 
 export const fetchRoadMapFromApi = async (): Promise<IRoadMap[]> => {
-  const data = await import('@/mock/mock-profile')
-  return data.default.MockRoadMap   
+  const res = await ax.get<IRoadMap[]>('/road-map', {
+  })
+  return res.data
 }

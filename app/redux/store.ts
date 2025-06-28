@@ -5,12 +5,13 @@ import showcaseReducer from '@/redux/slices/showcaseSlice'
 
 
 
+
 export const store = configureStore({
   reducer: {
     profile: profileReducer,
     menu: menuReducer,
     roadmap:roadmapReducer,
-    showcase:showcaseReducer
+    showcase:showcaseReducer,
     
   },
 })
