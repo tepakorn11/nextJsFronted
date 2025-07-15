@@ -8,6 +8,7 @@ export interface IWeathers {
     en?: string;
     th: string;
   };
+  weather_description: string;
   wind_speed: string;
   cloudiness: string;
 }

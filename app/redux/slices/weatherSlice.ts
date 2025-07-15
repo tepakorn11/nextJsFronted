@@ -30,7 +30,8 @@ const weatherSlice = createSlice({
       })
       .addCase(fetchWeather.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch weather';
+         state.error = action.payload as string || 'เกิดข้อผิดพลาด';
+        
       });
   },
 });

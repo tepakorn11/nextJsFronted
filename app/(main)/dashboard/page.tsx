@@ -1,86 +1,79 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { fetchWeather } from '@/redux/thunks/weatherThunk';
+import WeatherCitySearch from '@/components/dashboard/WeatherCitySearch';
+import CryptoTopCharts from '@/components/dashboard/CryptoTopCharts';
+import MagnificentSevenCharts from '@/components/dashboard/MagnificentSevenCharts';
+import UserList from '@/components/dashboard/UserList';
 
 export default function DashboardPage() {
-  const [weather, setWeather] = useState<any>(null);
-  const [btc, setBtc] = useState<number | null>(null);
-  const [quote, setQuote] = useState<string>('');
-  const [users, setUsers] = useState<any[]>([]);
+    const dispatch = useAppDispatch();
+    const weather = useAppSelector((state) => state.weather.data);
+    const weatherLoading = useAppSelector((state) => state.weather.loading);
+    const weatherError = useAppSelector((state) => state.weather.error);
 
-  useEffect(() => {
-    // ✅ Weather (ต้องใช้ API Key)
-    fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=Bangkok&units=metric&appid=3015727adf49f0b1d538332cec83a051`
-    )
-      .then(res => res.json())
-      .then(data => setWeather(data));
+    useEffect(() => {
+        dispatch(fetchWeather('Bangkok'));
+    }, [dispatch]);
 
-    // ✅ Bitcoin Price
-    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-      .then(res => res.json())
-      .then(data => setBtc(data.bitcoin.usd));
+    const handleCitySearch = (city: string) => {
+        dispatch(fetchWeather(city));
+    };
 
-    // ✅ Quote of the Day
-    fetch('https://zenquotes.io/api/random')
-      .then(res => res.json())
-      .then(data => setQuote(data[0].q));
+    return (
+        <div className="min-h-screen px-6 py-10 space-y-8 bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
+            <h1 className="text-3xl font-bold">🌐 Dashboard</h1>
 
-    // ✅ Users from JSONPlaceholder
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
-      .then(data => setUsers(data));
-  }, []);
+            {/* 🔹 Weather */}
+            <div className="rounded-xl p-6 shadow bg-gray-100 text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
+                <h2 className="text-xl font-semibold mb-2">
+                    🌤 Weather in {weather?.city || '...'}
+                </h2>
+                {weatherLoading ? (
+                    <p>Loading...</p>
+                ) : weatherError ? (
+                    <p className="text-red-400">Error: {weatherError}</p>
+                ) : weather ? (
+                    <div>
+                        <p>Temperature: {weather.temperature}</p>
+                        <p>Feels Like: {weather.feels_like}</p>
+                        <p>Humidity: {weather.humidity}</p>
+                        <p>Description: {weather.weather_description}</p>
+                        <p>Wind Speed: {weather.wind_speed}</p>
+                        <p>Cloudiness: {weather.cloudiness}</p>
+                    </div>
+                ) : (
+                    <p>No weather data</p>
+                )}
+                <div className="pt-4 border-t border-gray-700 mt-4">
+                    <WeatherCitySearch onSearch={handleCitySearch} />
+                </div>
+            </div>
 
-  return (
-    <div className="min-h-screen bg-black text-white px-6 py-10 space-y-8">
-      <h1 className="text-3xl font-bold">🌐 Dashboard</h1>
+            {/* 🔹 Crypto Charts */}
+            <div className="rounded-xl p-6 shadow bg-gray-100 text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-semibold mt-2">📊 Top 5 Crypto Charts</h2>
+                </div>
+                <CryptoTopCharts />
+            </div>
 
-      {/* 🔹 Weather */}
-      <div className="bg-gray-900 rounded-xl p-6 shadow">
-        <h2 className="text-xl font-semibold mb-2">🌤 Weather in Bangkok</h2>
-        {weather ? (
-          <div>
-            <p>Temperature: {weather.main.temp}°C</p>
-            <p>Description: {weather.weather[0].description}</p>
-            <p>Humidity: {weather.main.humidity}%</p>
-          </div>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
+            {/* 🔹 Magnificent Seven Stocks */}
+            <div className="rounded-xl p-6 shadow bg-gray-100 text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-semibold mt-2">📊 7 Magnificent Stocks</h2>
+                </div>
+                <MagnificentSevenCharts />
+            </div>
 
-      {/* 🔹 Bitcoin Price */}
-      <div className="bg-gray-900 rounded-xl p-6 shadow">
-        <h2 className="text-xl font-semibold mb-2">💰 Bitcoin Price</h2>
-        {btc !== null ? (
-          <p>USD {btc.toLocaleString()}</p>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
+            {/* 🔹 Animal Avatar Users */}
+            <div className="rounded-xl p-6 shadow bg-gray-100 text-black dark:bg-gray-900 dark:text-white transition-colors duration-300">
+                <h2 className="text-xl font-semibold mb-4">🐾 Animal Avatars – Users</h2>
+                <UserList />
+            </div>
 
-      {/* 🔹 Quote of the Day */}
-      <div className="bg-gray-900 rounded-xl p-6 shadow">
-        <h2 className="text-xl font-semibold mb-2">🧠 Quote of the Day</h2>
-        <p className="italic text-gray-300">"{quote || 'Loading...'}"</p>
-      </div>
-
-      {/* 🔹 Fake Users */}
-      <div className="bg-gray-900 rounded-xl p-6 shadow">
-        <h2 className="text-xl font-semibold mb-4">🧑‍💼 Users (from JSONPlaceholder)</h2>
-        {users.length > 0 ? (
-          <ul className="space-y-1 text-sm text-gray-300">
-            {users.slice(0, 5).map((user) => (
-              <li key={user.id}>
-                {user.name} – <span className="text-gray-400">{user.email}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
