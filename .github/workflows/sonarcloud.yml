@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: .
+        working-directory: nextJsFronted
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -26,3 +26,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SNYKKEYNEXT }}
           SONAR_PROJECT_KEY: tepakorn11_nextJsFronted
           SONAR_ORGANIZATION: tepakorn11
+          SONAR_HOST_URL: https://sonarcloud.io
