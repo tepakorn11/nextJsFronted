@@ -1,7 +1,9 @@
-name: SonarCloud Scan
+name: SonarCloud Scan - Frontend
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
 concurrency:
@@ -37,6 +39,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v1
         with:
           projectBaseDir: .
+          args: -Dsonar.scanner.forceJava=true
         env:
           SONAR_TOKEN: ${{ secrets.SONARTOKENFRONT }}
           SONAR_PROJECT_KEY: tepakorn11_nextJsFronted
