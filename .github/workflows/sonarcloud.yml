@@ -33,8 +33,8 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: .
+          projectKey: tepakorn11_nextJsFronted
+          organization: tepakorn11
         env:
           SONAR_TOKEN: ${{ secrets.SONARTOKENNEXT }}
-          SONAR_PROJECT_KEY: tepakorn11_nextJsFronted
-          SONAR_ORGANIZATION: tepakorn11
           SONAR_HOST_URL: https://sonarcloud.io
