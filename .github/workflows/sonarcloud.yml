@@ -2,39 +2,42 @@ name: SonarCloud Scan - Frontend
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   sonar-frontend:
-    name: Analyze Next.js Frontend
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .
-
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: SonarCloud Scan (Frontend)
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectBaseDir: .
-          projectKey: tepakorn11_nextJsFronted
-          organization: tepakorn11
-        env:
-          SONAR_TOKEN: ${{ secrets.SONARTOKENNEXT }}
-          SONAR_HOST_URL: https://sonarcloud.io
+          args: >
+            -Dsonar.projectKey=tepakorn11_nextJsFronted
+            -Dsonar.organization=tepakorn11
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/node_modules/**,**/.next/**,**/dist/**,**/coverage/**
+            -Dsonar.qualitygate.wait=true
